@@ -1,0 +1,35 @@
+CREATE DATABASE Library
+
+USE Library; 
+
+CREATE TABLE Author
+(
+	Id INT IDENTITY(1, 1) PRIMARY KEY,
+	Name VARCHAR(200) NOT NULL,
+	BirthDate DATETIME NOT NULL
+);
+
+CREATE TABLE Category
+(
+	Id INT IDENTITY(1, 1) PRIMARY KEY,
+	Name VARCHAR(150) NOT NULL
+);
+
+CREATE TABLE Book
+(
+	Id INT IDENTITY(1, 1) PRIMARY KEY,
+	Title VARCHAR(200) NOT NULL,
+	Description TEXT NOT NULL,
+	PublishedYear INT NOT NULL,
+	AuthorId INT NOT NULL,
+	FOREIGN KEY (AuthorId) REFERENCES Author(Id)
+);
+
+CREATE TABLE BookCategory 
+(
+	BookId INT NOT NULL,
+	CategoryId INT NOT NULL,
+	PRIMARY KEY(BookId, CategoryId),
+	FOREIGN KEY (BookId) REFERENCES Book(Id),
+	FOREIGN KEY (CategoryId) REFERENCES Category(Id)
+);
