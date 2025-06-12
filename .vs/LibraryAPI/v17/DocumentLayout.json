@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\dimid\\OneDrive\\Desktop\\projects\\LibraryAPI\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{B9288286-59CF-424F-B561-AFAACFCAC6BF}|LibraryAPI.csproj|c:\\users\\dimid\\onedrive\\desktop\\projects\\libraryapi\\controllers\\categorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9288286-59CF-424F-B561-AFAACFCAC6BF}|LibraryAPI.csproj|solutionrelative:controllers\\categorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B9288286-59CF-424F-B561-AFAACFCAC6BF}|LibraryAPI.csproj|c:\\users\\dimid\\onedrive\\desktop\\projects\\libraryapi\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B9288286-59CF-424F-B561-AFAACFCAC6BF}|LibraryAPI.csproj|solutionrelative:models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -17,10 +21,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{B9288286-59CF-424F-B561-AFAACFCAC6BF}|LibraryAPI.csproj|c:\\users\\dimid\\onedrive\\desktop\\projects\\libraryapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B9288286-59CF-424F-B561-AFAACFCAC6BF}|LibraryAPI.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B9288286-59CF-424F-B561-AFAACFCAC6BF}|LibraryAPI.csproj|c:\\users\\dimid\\onedrive\\desktop\\projects\\libraryapi\\models\\librarycontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B9288286-59CF-424F-B561-AFAACFCAC6BF}|LibraryAPI.csproj|solutionrelative:models\\librarycontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B9288286-59CF-424F-B561-AFAACFCAC6BF}|LibraryAPI.csproj|c:\\users\\dimid\\onedrive\\desktop\\projects\\libraryapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -39,6 +39,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "CategoryController.cs",
+              "DocumentMoniker": "C:\\Users\\dimid\\OneDrive\\Desktop\\projects\\LibraryAPI\\Controllers\\CategoryController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CategoryController.cs",
+              "ToolTip": "C:\\Users\\dimid\\OneDrive\\Desktop\\projects\\LibraryAPI\\Controllers\\CategoryController.cs",
+              "RelativeToolTip": "Controllers\\CategoryController.cs",
+              "ViewState": "AQIAABMAAAAAAAAAAAAiwEwAAABEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T15:37:51.54Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "Category.cs",
               "DocumentMoniker": "C:\\Users\\dimid\\OneDrive\\Desktop\\projects\\LibraryAPI\\Models\\Category.cs",
               "RelativeDocumentMoniker": "Models\\Category.cs",
@@ -51,7 +64,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Book.cs",
               "DocumentMoniker": "C:\\Users\\dimid\\OneDrive\\Desktop\\projects\\LibraryAPI\\Models\\Book.cs",
               "RelativeDocumentMoniker": "Models\\Book.cs",
@@ -59,12 +72,11 @@
               "RelativeToolTip": "Models\\Book.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T11:00:59.46Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-07T11:00:59.46Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Author.cs",
               "DocumentMoniker": "C:\\Users\\dimid\\OneDrive\\Desktop\\projects\\LibraryAPI\\Models\\Author.cs",
               "RelativeDocumentMoniker": "Models\\Author.cs",
@@ -72,21 +84,7 @@
               "RelativeToolTip": "Models\\Author.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T11:00:54.584Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "LibraryContext.cs",
-              "DocumentMoniker": "C:\\Users\\dimid\\OneDrive\\Desktop\\projects\\LibraryAPI\\Models\\LibraryContext.cs",
-              "RelativeDocumentMoniker": "Models\\LibraryContext.cs",
-              "ToolTip": "C:\\Users\\dimid\\OneDrive\\Desktop\\projects\\LibraryAPI\\Models\\LibraryContext.cs",
-              "RelativeToolTip": "Models\\LibraryContext.cs",
-              "ViewState": "AQIAABwAAAAAAAAAAAAwwAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T11:00:18.52Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-07T11:00:54.584Z"
             },
             {
               "$type": "Document",
@@ -102,7 +100,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\dimid\\OneDrive\\Desktop\\projects\\LibraryAPI\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -110,8 +108,7 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAA4AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T09:25:04.889Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-07T09:25:04.889Z"
             }
           ]
         }
