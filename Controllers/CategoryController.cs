@@ -1,4 +1,5 @@
-﻿using LibraryAPI.Models;
+﻿using LibraryAPI.DTOs;
+using LibraryAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,19 @@ namespace LibraryAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult getById([FromRoute]int id)
         {
-            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
+            var category = _context.Categories
+                .Where(c => c.Id == id)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.Name,
+                    Books = c.Books.Select(b => new
+                    {
+                        b.Id,
+                        b.Title
+                    }).ToList()
+                })
+                .FirstOrDefault();
             if (category == null)
             {
                 return NotFound($"No category found with id = {id}!");
@@ -36,45 +49,45 @@ namespace LibraryAPI.Controllers
         [HttpPost]
         public IActionResult addCategory([FromBody] string name)
         {
-            Category? newCategory = _context.Categories.FirstOrDefault(c => c.Name == name);
+            Category? category = _context.Categories.FirstOrDefault(c => c.Name == name);
 
-            if (newCategory != null)
+            if (category != null)
             {
                 return BadRequest($"The category {name} already exists!");
             }
 
+            Category newCategory = new Category { Name = name };
             _context.Categories.Add(newCategory);
             _context.SaveChanges();
             return Ok("Category has been added!");
         }
 
         [HttpPut]
-        public IActionResult updateCategory([FromBody] int id, string newName)
+        public IActionResult updateCategory([FromBody] CategoryUpdateDto categoryDto)
         {
-            Category? updatedCategory = _context.Categories.FirstOrDefault(c => c.Id == id);
-            if (updatedCategory != null)
+            var updatedCategory = _context.Categories.FirstOrDefault(c => c.Id == categoryDto.Id);
+            if (updatedCategory == null)
             {
-                updatedCategory.Name = newName;
-
-                _context.SaveChanges();
-
-                return Ok($"Category with id = {id} has been successfully updated!");
+                return NotFound($"Category with id = {categoryDto.Id} doesn't exist!");
             }
 
-            return NotFound($"Vehicle with id = {id} doesn't exist!");
+            updatedCategory.Name = categoryDto.Name;
+            _context.SaveChanges();
+            return Ok($"Category with id = {categoryDto.Id} has been successfully updated!");            
         }
 
         [HttpDelete]
-        public IActionResult deleteCategory([FromBody] int id) 
+        public IActionResult deleteCategory([FromRoute] int id) 
         { 
-            Category? category = _context.Categories.FirstOrDefault(c => c.Id == id);
-            if (category != null)
+            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
+            if (category == null)
             {
-                _context.Categories.Remove(category);
-                _context.SaveChanges();
-                return Ok($"Category with id = {id} has been successfully deleted!");
+                return NotFound($"Category with id = {id} doesn't exist!");
             }
-            return NotFound($"Category with id = {id} doesn't exist!");
+
+            _context.Categories.Remove(category);
+            _context.SaveChanges();
+            return Ok($"Category with id = {id} has been successfully deleted!");
         }
     }
 }
