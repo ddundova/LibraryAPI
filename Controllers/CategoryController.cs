@@ -9,7 +9,7 @@ namespace LibraryAPI.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        LibraryContext _context = new LibraryContext();
+        private readonly LibraryContext _context;
 
         public CategoryController(LibraryContext context)
         {
@@ -49,7 +49,7 @@ namespace LibraryAPI.Controllers
         [HttpPost]
         public IActionResult addCategory([FromBody] string name)
         {
-            Category? category = _context.Categories.FirstOrDefault(c => c.Name == name);
+            var category = _context.Categories.FirstOrDefault(c => c.Name == name);
 
             if (category != null)
             {
