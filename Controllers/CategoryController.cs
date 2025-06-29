@@ -17,14 +17,14 @@ namespace LibraryAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult getAll()
+        public IActionResult GetAll()
         {
             var result = _context.Categories.ToList();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public IActionResult getById([FromRoute]int id)
+        public IActionResult GetById([FromRoute]int id)
         {
             var category = _context.Categories
                 .Where(c => c.Id == id)
@@ -47,7 +47,7 @@ namespace LibraryAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult addCategory([FromBody] string name)
+        public IActionResult AddCategory([FromBody] string name)
         {
             var category = _context.Categories.FirstOrDefault(c => c.Name == name);
 
@@ -63,7 +63,7 @@ namespace LibraryAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult updateCategory([FromBody] CategoryUpdateDto categoryDto)
+        public IActionResult UpdateCategory([FromBody] CategoryUpdateDto categoryDto)
         {
             var updatedCategory = _context.Categories.FirstOrDefault(c => c.Id == categoryDto.Id);
             if (updatedCategory == null)
@@ -77,7 +77,7 @@ namespace LibraryAPI.Controllers
         }
 
         [HttpDelete]
-        public IActionResult deleteCategory([FromRoute] int id) 
+        public IActionResult DeleteCategory([FromRoute] int id) 
         { 
             var category = _context.Categories.FirstOrDefault(c => c.Id == id);
             if (category == null)

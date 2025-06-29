@@ -9,7 +9,6 @@ namespace LibraryAPI.Controllers
     [ApiController]
     public class AuthorController : ControllerBase
     {
-
         LibraryContext _context = new LibraryContext();
 
         public AuthorController(LibraryContext context)
@@ -18,14 +17,14 @@ namespace LibraryAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult getAll()
+        public IActionResult GetAll()
         {
             var result = _context.Authors.ToList();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public IActionResult getById(int id)
+        public IActionResult GetById(int id)
         {
             var author = _context.Authors.FirstOrDefault(a => a.Id == id);
             if (author == null)
@@ -36,7 +35,7 @@ namespace LibraryAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult addAuthor([FromBody] AuthorCreateDto authorDto)
+        public IActionResult AddAuthor([FromBody] AuthorCreateDto authorDto)
         {
             var author = new Author
             {
@@ -50,7 +49,7 @@ namespace LibraryAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult updateAuthor([FromBody] AuthorUpdateDto authorDto)
+        public IActionResult UpdateAuthor([FromBody] AuthorUpdateDto authorDto)
         {
             var author = _context.Authors.FirstOrDefault(a => a.Id == authorDto.Id);
 
@@ -67,7 +66,7 @@ namespace LibraryAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult deleteAuthor([FromBody] int id)
+        public IActionResult DeleteAuthor([FromBody] int id)
         {
             var author = _context.Authors.FirstOrDefault(a => a.Id == id);
 
