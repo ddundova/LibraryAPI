@@ -2,6 +2,7 @@
 using LibraryAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.Controllers
 {
@@ -19,7 +20,18 @@ namespace LibraryAPI.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var result = _context.Categories.ToList();
+            var result = _context.Categories
+                .Select(c => new CategoryGetDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Books = c.Books.Select(b => new BookDto
+                    {
+                        Id = b.Id,
+                        Title = b.Title
+                    }).ToList()
+                })
+                .ToList();
             return Ok(result);
         }
 
@@ -28,14 +40,14 @@ namespace LibraryAPI.Controllers
         {
             var category = _context.Categories
                 .Where(c => c.Id == id)
-                .Select(c => new
+                .Select(c => new CategoryGetDto
                 {
-                    c.Id,
-                    c.Name,
-                    Books = c.Books.Select(b => new
+                    Id = c.Id,
+                    Name = c.Name,
+                    Books = c.Books.Select(b => new BookDto
                     {
-                        b.Id,
-                        b.Title
+                        Id = b.Id,
+                        Title = b.Title
                     }).ToList()
                 })
                 .FirstOrDefault();
@@ -79,11 +91,15 @@ namespace LibraryAPI.Controllers
         [HttpDelete]
         public IActionResult DeleteCategory([FromRoute] int id) 
         { 
-            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
+            var category = _context.Categories
+                .Include(c => c.Books)
+                .FirstOrDefault(c => c.Id == id);
             if (category == null)
             {
                 return NotFound($"Category with id = {id} doesn't exist!");
             }
+
+            category.Books.Clear();
 
             _context.Categories.Remove(category);
             _context.SaveChanges();

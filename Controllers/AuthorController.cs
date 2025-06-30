@@ -9,7 +9,7 @@ namespace LibraryAPI.Controllers
     [ApiController]
     public class AuthorController : ControllerBase
     {
-        LibraryContext _context = new LibraryContext();
+        private readonly LibraryContext _context;
 
         public AuthorController(LibraryContext context)
         {
@@ -19,14 +19,40 @@ namespace LibraryAPI.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var result = _context.Authors.ToList();
+            var result = _context.Authors
+                .Select(a => new AuthorGetDto
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    BirthDate = a.BirthDate,
+                    Books = a.Books.Select(b => new BookDto
+                    {
+                        Id = b.Id,
+                        Title = b.Title
+                    }).ToList()
+                })
+                .ToList();
+
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var author = _context.Authors.FirstOrDefault(a => a.Id == id);
+            var author = _context.Authors
+                .Select(a => new AuthorGetDto
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    BirthDate = a.BirthDate,
+                    Books = a.Books.Select(b => new BookDto
+                    {
+                        Id = b.Id,
+                        Title = b.Title
+                    }).ToList()
+                })
+                .FirstOrDefault(a => a.Id == id);
+
             if (author == null)
             {
                 return NotFound($"No author found with id = {id}!");

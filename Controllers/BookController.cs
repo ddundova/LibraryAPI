@@ -30,14 +30,16 @@ namespace LibraryAPI.Controllers
                     b.Title,
                     b.Description,
                     b.PublishedYear,
-                    b.AuthorId,
-                    Author = new
+                    Author = new AuthorDto
                     {
-                        b.Author.Name
+                        Id = b.Author.Id,
+                        Name = b.Author.Name,
+                        BirthDate = b.Author.BirthDate
                     },
-                    Categories = b.Categories.Select(c => new
+                    Categories = b.Categories.Select(c => new CategoryDto
                     {
-                        c.Name
+                        Id = c.Id,
+                        Name = c.Name
                     }).ToList()
                 })
                 .ToList();
@@ -58,14 +60,16 @@ namespace LibraryAPI.Controllers
                     b.Title,
                     b.Description,
                     b.PublishedYear,
-                    b.AuthorId,
-                    Author = new
+                    Author = new AuthorDto
                     {
-                        b.Author.Name
+                        Id = b.Author.Id,
+                        Name = b.Author.Name,
+                        BirthDate = b.Author.BirthDate
                     },
-                    Categories = b.Categories.Select(c => new
+                    Categories = b.Categories.Select(c => new CategoryDto
                     {
-                        c.Name
+                        Id = c.Id,
+                        Name = c.Name
                     }).ToList()
                 }).FirstOrDefault();
 
@@ -80,7 +84,18 @@ namespace LibraryAPI.Controllers
         [HttpPost]
         public IActionResult AddBook([FromBody] BookCreateDto bookDto)
         {
-            var author = _context.Authors.FirstOrDefault(a => a.Id == bookDto.AuthorId);
+            var existing = _context.Books
+                .FirstOrDefault(b =>
+                b.Title.ToLower() == bookDto.Title.ToLower() &&
+                b.AuthorId == bookDto.AuthorId &&
+                b.PublishedYear == bookDto.PublishedYear);
+
+            if (existing != null)
+            {
+                return BadRequest("A book with the same title, author, and published year already exists.");
+            }
+
+            var author = _context.Authors.Find(bookDto.AuthorId);
             if (author == null)
             {
                 return BadRequest($"Author with id = {bookDto.AuthorId} does not exist.");
@@ -99,13 +114,14 @@ namespace LibraryAPI.Controllers
                 Title = bookDto.Title,
                 Description = bookDto.Description,
                 PublishedYear = bookDto.PublishedYear,
-                AuthorId = author.Id,
+                AuthorId = bookDto.AuthorId,
                 Categories = categories
             };
 
             _context.Books.Add(newBook);
             _context.SaveChanges();
-            return Ok(newBook);
+            return Ok($"Book {newBook.Title} has been added successfully.");
+
         }
 
         [HttpPut]
@@ -137,28 +153,76 @@ namespace LibraryAPI.Controllers
             book.Description = bookDto.Description;
             book.PublishedYear = bookDto.PublishedYear;
             book.AuthorId = bookDto.AuthorId;
-            book.Categories.Clear();
-            foreach (var category in categories)
+
+            List<int> bookCategoryIds = book.Categories.Select(c => c.Id).OrderBy(id => id).ToList();
+            List<int> bookDtoCategoryIds = bookDto.CategoryIds.OrderBy(id => id).ToList();
+            bool isCategoriesChanged = false;
+
+            if (bookCategoryIds.Count != bookDtoCategoryIds.Count)
             {
-                book.Categories.Add(category);
+                isCategoriesChanged = true;
+            }
+            else
+            {
+                for (int i = 0; i < bookCategoryIds.Count; i++)
+                {
+                    if (bookCategoryIds[i] != bookDtoCategoryIds[i])
+                    {
+                        isCategoriesChanged = true;
+                        break;
+                    }
+                }
+            }
+
+            if (isCategoriesChanged)
+            {
+                book.Categories.Clear();
+                foreach (var category in categories)
+                {
+                    book.Categories.Add(category);
+                }
             }
 
             _context.SaveChanges();
             return Ok($"Book with id = {bookDto.Id} was updated successfully.");
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult DeleteBook([FromRoute] int id)
         {
-            var book = _context.Books.FirstOrDefault(b => b.Id == id);
+            var book = _context.Books
+                .Include(b => b.Categories)
+                .FirstOrDefault(b => b.Id == id);
             if (book == null)
             {
                 return NotFound($"Book with id = {id} was not found.");
             }
 
+            book.Categories.Clear();
+
             _context.Remove(book);
             _context.SaveChanges();
             return Ok($"Book with id = {id} was deleted successfully.");
+        }
+
+        [HttpGet("search")]
+        public IActionResult SearchByTitle([FromQuery] string title)
+        {
+            if (string.IsNullOrEmpty(title)) {
+                return BadRequest("Title should not be empty.");
+            }
+
+            var books = _context.Books
+                .Select(b => new BookDto
+                {
+                    Id = b.Id,
+                    Title = b.Title
+                })
+                .Where(b => b.Title.ToLower().Contains(title.ToLower()))
+                .ToList();
+
+            return Ok(books);
+
         }
     }
 }
