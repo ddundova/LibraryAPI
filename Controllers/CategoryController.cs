@@ -32,6 +32,7 @@ namespace LibraryAPI.Controllers
                     }).ToList()
                 })
                 .ToList();
+
             return Ok(result);
         }
 
@@ -51,59 +52,89 @@ namespace LibraryAPI.Controllers
                     }).ToList()
                 })
                 .FirstOrDefault();
+
             if (category == null)
             {
-                return NotFound($"No category found with id = {id}!");
+                return NotFound(new
+                {
+                    status = 404,
+                    message = $"Category with ID {id} not found"
+                });
             }
             return Ok(category);
         }
 
         [HttpPost]
-        public IActionResult AddCategory([FromBody] string name)
+        public IActionResult AddCategory([FromBody] CategoryCreateDto categoryDto)
         {
-            var category = _context.Categories.FirstOrDefault(c => c.Name == name);
+            var category = _context.Categories.FirstOrDefault(c => c.Name == categoryDto.Name);
 
             if (category != null)
             {
-                return BadRequest($"The category {name} already exists!");
+                return BadRequest(new
+                {
+                    status = 400,
+                    message = $"Category {categoryDto.Name} already exists"
+                });
             }
 
-            Category newCategory = new Category { Name = name };
+            Category newCategory = new Category { Name = categoryDto.Name };
             _context.Categories.Add(newCategory);
             _context.SaveChanges();
-            return Ok("Category has been added!");
+
+            return Ok(new CategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name
+            });
         }
 
-        [HttpPut]
-        public IActionResult UpdateCategory([FromBody] CategoryUpdateDto categoryDto)
+        [HttpPut("{id}")]
+        public IActionResult UpdateCategory([FromRoute] int id, [FromBody] CategoryCreateDto categoryDto)
         {
-            var updatedCategory = _context.Categories.FirstOrDefault(c => c.Id == categoryDto.Id);
+            var updatedCategory = _context.Categories.FirstOrDefault(c => c.Id == id);
+
             if (updatedCategory == null)
             {
-                return NotFound($"Category with id = {categoryDto.Id} doesn't exist!");
+                return NotFound(new
+                {
+                    status = 404,
+                    message = $"Category with ID {id} not found"
+                });
             }
 
             updatedCategory.Name = categoryDto.Name;
             _context.SaveChanges();
-            return Ok($"Category with id = {categoryDto.Id} has been successfully updated!");            
+
+            return Ok(new CategoryDto
+            {
+                Id = updatedCategory.Id,
+                Name = updatedCategory.Name
+            });            
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult DeleteCategory([FromRoute] int id) 
         { 
             var category = _context.Categories
                 .Include(c => c.Books)
                 .FirstOrDefault(c => c.Id == id);
+
             if (category == null)
             {
-                return NotFound($"Category with id = {id} doesn't exist!");
+                return NotFound(new
+                {
+                    status = 404,
+                    message = $"Category with ID {id} not found"
+                });
             }
 
             category.Books.Clear();
 
             _context.Categories.Remove(category);
             _context.SaveChanges();
-            return Ok($"Category with id = {id} has been successfully deleted!");
+
+            return Ok($"Category with ID = {id} has been successfully deleted!");
         }
     }
 }

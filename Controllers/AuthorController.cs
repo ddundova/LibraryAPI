@@ -55,15 +55,31 @@ namespace LibraryAPI.Controllers
 
             if (author == null)
             {
-                return NotFound($"No author found with id = {id}!");
+                return NotFound(new
+                {
+                    status = 400,
+                    message = $"Author with ID {id} not found"
+                });
             }
+
             return Ok(author);
         }
 
         [HttpPost]
         public IActionResult AddAuthor([FromBody] AuthorCreateDto authorDto)
         {
-            var author = new Author
+            var author = _context.Authors.FirstOrDefault(a => a.Name == authorDto.Name);
+            
+            if (author != null)
+            {
+                return BadRequest(new
+                {
+                    status = 400,
+                    message = $"Author {authorDto.Name} already exists"
+                });
+            }
+
+            author = new Author
             {
                 Name = authorDto.Name,
                 BirthDate = authorDto.BirthDate
@@ -71,40 +87,57 @@ namespace LibraryAPI.Controllers
 
             _context.Authors.Add(author);
             _context.SaveChanges();
-            return Ok($"Author: {authorDto.Name} has been added successfully!");
-        }
 
-        [HttpPut]
-        public IActionResult UpdateAuthor([FromBody] AuthorUpdateDto authorDto)
-        {
-            var author = _context.Authors.FirstOrDefault(a => a.Id == authorDto.Id);
-
-            if(author == null)
+            return Ok(new AuthorCreateDto
             {
-                return NotFound($"No author with id = {authorDto.Id} was found!");
-            }
-
-            author.Name = authorDto.Name;
-            author.BirthDate = authorDto.BirthDate;
-
-            _context.SaveChanges();
-            return Ok($"Author with id = {author.Id} has been updated successfully!");
+                Name = author.Name,
+                BirthDate = author.BirthDate
+            });
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteAuthor([FromBody] int id)
+        [HttpPut("{id}")]
+        public IActionResult UpdateAuthor([FromRoute] int id, [FromBody] AuthorCreateDto authorDto)
         {
             var author = _context.Authors.FirstOrDefault(a => a.Id == id);
 
             if(author == null)
             {
-                return NotFound($"No author with id = {id} was found!");
+                return NotFound(new
+                {
+                    status = 404,
+                    message = $"Author with ID {id} not found"
+                });
+            }
+
+            author.Name = authorDto.Name;
+            author.BirthDate = authorDto.BirthDate;
+            _context.SaveChanges();
+
+            return Ok(new AuthorCreateDto
+            {
+                Name = author.Name,
+                BirthDate = author.BirthDate
+            });
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteAuthor([FromRoute] int id)
+        {
+            var author = _context.Authors.FirstOrDefault(a => a.Id == id);
+
+            if(author == null)
+            {
+                return NotFound(new
+                {
+                    status = 404,
+                    message = $"Author with ID {id} not found"
+                });
             }
 
             _context.Authors.Remove(author);
             _context.SaveChanges();
 
-            return Ok($"Author with id = {id} has been deleted successfully!");
+            return Ok($"Author with ID = {id} has been deleted successfully!");
         }
     }
 }

@@ -24,23 +24,15 @@ namespace LibraryAPI.Controllers
             var result = _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Categories)
-                .Select(b => new 
+                .Select(b => new BookGetDto
                 {
-                    b.Id,
-                    b.Title,
-                    b.Description,
-                    b.PublishedYear,
-                    Author = new AuthorDto
-                    {
-                        Id = b.Author.Id,
-                        Name = b.Author.Name,
-                        BirthDate = b.Author.BirthDate
-                    },
-                    Categories = b.Categories.Select(c => new CategoryDto
-                    {
-                        Id = c.Id,
-                        Name = c.Name
-                    }).ToList()
+                    Id = b.Id,
+                    Title = b.Title,
+                    Description = b.Description,
+                    PublishedYear = b.PublishedYear,
+                    AuthorId = b.Author.Id,
+                    AuthorName = b.Author.Name,
+                    Categories = b.Categories.Select(c => c.Name).ToList()
                 })
                 .ToList();
 
@@ -54,28 +46,24 @@ namespace LibraryAPI.Controllers
                 .Where(b => b.Id == id)
                 .Include(b => b.Author)
                 .Include(b => b.Categories)
-                .Select(b => new
+                .Select(b => new BookGetDto
                 {
-                    b.Id,
-                    b.Title,
-                    b.Description,
-                    b.PublishedYear,
-                    Author = new AuthorDto
-                    {
-                        Id = b.Author.Id,
-                        Name = b.Author.Name,
-                        BirthDate = b.Author.BirthDate
-                    },
-                    Categories = b.Categories.Select(c => new CategoryDto
-                    {
-                        Id = c.Id,
-                        Name = c.Name
-                    }).ToList()
+                    Id = b.Id,
+                    Title = b.Title,
+                    Description = b.Description,
+                    PublishedYear = b.PublishedYear,
+                    AuthorId = b.Author.Id,
+                    AuthorName = b.Author.Name,
+                    Categories = b.Categories.Select(c => c.Name).ToList()
                 }).FirstOrDefault();
 
             if (book == null)
             {
-                return NotFound($"No book with id = {id} was found!");
+                return NotFound(new
+                {
+                    status = 404,
+                    message = $"Book with ID {id} not found"
+                });
             }
 
             return Ok(book);
@@ -92,13 +80,21 @@ namespace LibraryAPI.Controllers
 
             if (existing != null)
             {
-                return BadRequest("A book with the same title, author, and published year already exists.");
+                return BadRequest(new
+                {
+                    status = 400,
+                    message = $"Book {bookDto.Title} already exists"
+                });
             }
 
             var author = _context.Authors.Find(bookDto.AuthorId);
             if (author == null)
             {
-                return BadRequest($"Author with id = {bookDto.AuthorId} does not exist.");
+                return BadRequest(new
+                {
+                    status = 400,
+                    message = $"Author with ID {bookDto.AuthorId} does not exist"
+                });
             }
 
             var categories = _context.Categories
@@ -106,7 +102,11 @@ namespace LibraryAPI.Controllers
                 .ToList();
             if (categories.Count != bookDto.CategoryIds.Count)
             {
-                return BadRequest("One or more category IDs are invalid.");
+                return BadRequest(new
+                {
+                    status = 400,
+                    message = "One or more categories entered wrong"
+                });
             }
 
             var newBook = new Book
@@ -120,25 +120,40 @@ namespace LibraryAPI.Controllers
 
             _context.Books.Add(newBook);
             _context.SaveChanges();
-            return Ok($"Book {newBook.Title} has been added successfully.");
+
+            return Ok(new BookAddOutputDto
+            {
+                Id = newBook.Id,
+                Title = newBook.Title,
+                AuthorName = newBook.Author.Name,
+                Categories = newBook.Categories.Select(c => c.Name).ToList()
+            });
 
         }
 
-        [HttpPut]
-        public IActionResult UpdateBook([FromBody] BookUpdateDto bookDto)
+        [HttpPut("{id}")]
+        public IActionResult UpdateBook([FromRoute] int id, [FromBody] BookCreateDto bookDto)
         {
             var book = _context.Books
                 .Include(b => b.Categories)
-                .FirstOrDefault(b => b.Id == bookDto.Id);
+                .FirstOrDefault(b => b.Id == id);
             if (book == null)
             {
-                return NotFound($"Book with id = {bookDto.Id} not found.");
+                return NotFound(new
+                {
+                    status = 404,
+                    message = $"Book with ID {id} not found"
+                });
             }
 
             var author = _context.Authors.FirstOrDefault(a => a.Id == bookDto.AuthorId);
             if (author == null)
             {
-                return BadRequest($"Author with id = {bookDto.AuthorId} does not exist.");
+                return BadRequest(new
+                {
+                    status = 400,
+                    message = $"Author with ID {bookDto.AuthorId} does not exist"
+                });
             }
 
             var categories = _context.Categories
@@ -146,7 +161,11 @@ namespace LibraryAPI.Controllers
                 .ToList();
             if (categories.Count != bookDto.CategoryIds.Count)
             {
-                return BadRequest("One or more category IDs are invalid.");
+                return BadRequest(new
+                {
+                    status = 400,
+                    message = "One or more categories entered wrong"
+                });
             }
 
             book.Title = bookDto.Title;
@@ -182,9 +201,15 @@ namespace LibraryAPI.Controllers
                     book.Categories.Add(category);
                 }
             }
-
             _context.SaveChanges();
-            return Ok($"Book with id = {bookDto.Id} was updated successfully.");
+
+            return Ok(new BookAddOutputDto
+            {
+                Id = book.Id,
+                Title = book.Title,
+                AuthorName = book.Author.Name,
+                Categories = book.Categories.Select(c => c.Name).ToList()
+            });
         }
 
         [HttpDelete("{id}")]
@@ -195,21 +220,29 @@ namespace LibraryAPI.Controllers
                 .FirstOrDefault(b => b.Id == id);
             if (book == null)
             {
-                return NotFound($"Book with id = {id} was not found.");
+                return NotFound(new
+                {
+                    status = 404,
+                    message = $"Book with ID {id} not found"
+                });
             }
 
             book.Categories.Clear();
 
             _context.Remove(book);
             _context.SaveChanges();
-            return Ok($"Book with id = {id} was deleted successfully.");
+            return Ok($"Book with ID = {id} was deleted successfully");
         }
 
         [HttpGet("search")]
         public IActionResult SearchByTitle([FromQuery] string title)
         {
             if (string.IsNullOrEmpty(title)) {
-                return BadRequest("Title should not be empty.");
+                return BadRequest(new
+                {
+                    status = 400,
+                    message = "Title should not be empty"
+                });
             }
 
             var books = _context.Books
