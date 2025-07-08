@@ -32,7 +32,7 @@ public partial class LibraryContext : DbContext
             entity.Property(e => e.BirthDate).HasColumnType("datetime");
             entity.Property(e => e.Name)
                 .HasMaxLength(200)
-                .IsUnicode(false);
+                .IsUnicode(true);
         });
 
         modelBuilder.Entity<Book>(entity =>
@@ -44,7 +44,7 @@ public partial class LibraryContext : DbContext
             entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.Title)
                 .HasMaxLength(200)
-                .IsUnicode(false);
+                .IsUnicode(true);
 
             entity.HasOne(d => d.Author).WithMany(p => p.Books)
                 .HasForeignKey(d => d.AuthorId)
@@ -77,7 +77,7 @@ public partial class LibraryContext : DbContext
 
             entity.Property(e => e.Name)
                 .HasMaxLength(150)
-                .IsUnicode(false);
+                .IsUnicode(true);
         });
 
         OnModelCreatingPartial(modelBuilder);
