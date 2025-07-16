@@ -1,5 +1,6 @@
 ﻿using LibraryAPI.DTOs;
 using LibraryAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -64,6 +65,7 @@ namespace LibraryAPI.Controllers
             return Ok(category);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult AddCategory([FromBody] CategoryCreateDto categoryDto)
         {
@@ -89,6 +91,7 @@ namespace LibraryAPI.Controllers
             });
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public IActionResult UpdateCategory([FromRoute] int id, [FromBody] CategoryCreateDto categoryDto)
         {
@@ -113,6 +116,7 @@ namespace LibraryAPI.Controllers
             });            
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult DeleteCategory([FromRoute] int id) 
         { 

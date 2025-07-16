@@ -21,6 +21,12 @@ public partial class LibraryContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<User> Users { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=.;Database=Library;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Author>(entity =>
@@ -32,7 +38,7 @@ public partial class LibraryContext : DbContext
             entity.Property(e => e.BirthDate).HasColumnType("datetime");
             entity.Property(e => e.Name)
                 .HasMaxLength(200)
-                .IsUnicode(true);
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Book>(entity =>
@@ -44,7 +50,7 @@ public partial class LibraryContext : DbContext
             entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.Title)
                 .HasMaxLength(200)
-                .IsUnicode(true);
+                .IsUnicode(false);
 
             entity.HasOne(d => d.Author).WithMany(p => p.Books)
                 .HasForeignKey(d => d.AuthorId)
@@ -77,7 +83,18 @@ public partial class LibraryContext : DbContext
 
             entity.Property(e => e.Name)
                 .HasMaxLength(150)
-                .IsUnicode(true);
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__User__3214EC078365413C");
+
+            entity.ToTable("User");
+
+            entity.Property(e => e.Username)
+                .HasMaxLength(100)
+                .IsUnicode(false);
         });
 
         OnModelCreatingPartial(modelBuilder);

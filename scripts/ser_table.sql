@@ -1,0 +1,9 @@
+USE Library;
+
+CREATE TABLE [User]
+(
+	Id INT IDENTITY(1, 1) PRIMARY KEY,
+	Username VARCHAR(100) NOT NULL,
+	PasswordHash VARBINARY(MAX) NOT NULL,
+	PasswordSalt VARBINARY(MAX) NOT NULL
+);
