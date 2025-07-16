@@ -1,5 +1,6 @@
 ﻿using LibraryAPI.DTOs;
 using LibraryAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,7 +58,7 @@ namespace LibraryAPI.Controllers
             {
                 return NotFound(new
                 {
-                    status = 400,
+                    status = 404,
                     message = $"Author with ID {id} not found"
                 });
             }
@@ -65,6 +66,7 @@ namespace LibraryAPI.Controllers
             return Ok(author);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult AddAuthor([FromBody] AuthorCreateDto authorDto)
         {
@@ -95,6 +97,7 @@ namespace LibraryAPI.Controllers
             });
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public IActionResult UpdateAuthor([FromRoute] int id, [FromBody] AuthorCreateDto authorDto)
         {
@@ -120,6 +123,7 @@ namespace LibraryAPI.Controllers
             });
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult DeleteAuthor([FromRoute] int id)
         {

@@ -1,5 +1,6 @@
 ﻿using LibraryAPI.DTOs;
 using LibraryAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,13 @@ namespace LibraryAPI.Controllers
         public BookController(LibraryContext context)
         {
             _context = context;
+        }
+
+        [Authorize]
+        [HttpGet("secure-test")]
+        public IActionResult TestSecure()
+        {
+            return Ok("Ако виждаш това, значи имаш достъп!");
         }
 
         [HttpGet]
@@ -69,6 +77,7 @@ namespace LibraryAPI.Controllers
             return Ok(book);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult AddBook([FromBody] BookCreateDto bookDto)
         {
@@ -131,6 +140,7 @@ namespace LibraryAPI.Controllers
 
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public IActionResult UpdateBook([FromRoute] int id, [FromBody] BookCreateDto bookDto)
         {
@@ -212,6 +222,7 @@ namespace LibraryAPI.Controllers
             });
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult DeleteBook([FromRoute] int id)
         {
